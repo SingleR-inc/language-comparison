@@ -36,3 +36,19 @@ os.mkdir("py_integrated_scenario")
 dolomite_base.save_object(matches[0], "py_integrated_scenario/blueprint")
 dolomite_base.save_object(matches[1], "py_integrated_scenario/dice")
 dolomite_base.save_object(imatches, "py_integrated_scenario/integrated")
+
+m_sce = scrnaseq.fetch_dataset("muraro-pancreas-2016", "2023-12-19", realize_assays=True)
+p_sce = scrnaseq.fetch_dataset("grun-pancreas-2016", "2023-12-14", realize_assays=True)
+m_counts = m_sce.assay(0)
+import scranpy
+m_logcounts = scranpy.normalize_counts(m_counts, size_factors=scranpy.center_size_factors(m_counts.sum(axis=0)))
+matches = singler.annotate_single(
+    p_sce,
+    m_logcounts,
+    m_sce.get_column_data().get_column("label"),
+    ref_features=m_sce.get_row_names(),
+    train_args={ "marker_method": "auc" }
+)
+if os.path.exists("py_sc_de"):
+    shutil.rmtree("py_sc_de")
+dolomite_base.save_object(matches, "py_sc_de")

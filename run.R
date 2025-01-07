@@ -26,3 +26,17 @@ matches <- SingleR(
 )
 unlink("r_integrated_scenario", recursive=TRUE)
 saveObject(matches, "r_integrated_scenario")
+
+m_sce <- fetchDataset("muraro-pancreas-2016", "2023-12-19", realize.assays=TRUE)
+p_sce <- fetchDataset("grun-pancreas-2016", "2023-12-14", realize.assays=TRUE)
+matches <- SingleR(
+    p_sce,
+    {
+        counts <- assay(m_sce)
+        scrapper::normalizeCounts(counts, size.factors=scrapper::centerSizeFactors(colSums(counts)))
+    },
+    labels=m_sce$label,
+    de.method="wilcox"
+)
+unlink("r_sc_de", recursive=TRUE)
+saveObject(matches, "r_sc_de")
