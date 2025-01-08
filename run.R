@@ -18,6 +18,8 @@ matches <- SingleR(l_sce, blueprint_ref, labels=blueprint_ref$label.main, assay.
 unlink("r_basic_scenario_2", recursive=TRUE)
 saveObject(matches, "r_basic_scenario_2")
 
+#######################
+
 matches <- SingleR(
     h_sce,
     list(blueprint=blueprint_ref, dice=dice_ref),
@@ -27,8 +29,11 @@ matches <- SingleR(
 unlink("r_integrated_scenario", recursive=TRUE)
 saveObject(matches, "r_integrated_scenario")
 
+#######################
+
 m_sce <- fetchDataset("muraro-pancreas-2016", "2023-12-19", realize.assays=TRUE)
 p_sce <- fetchDataset("grun-pancreas-2016", "2023-12-14", realize.assays=TRUE)
+
 matches <- SingleR(
     p_sce,
     {
@@ -36,7 +41,22 @@ matches <- SingleR(
         scrapper::normalizeCounts(counts, size.factors=scrapper::centerSizeFactors(colSums(counts)))
     },
     labels=m_sce$label,
-    de.method="wilcox"
+    de.method="wilcox",
+    assay.type.test=1
 )
 unlink("r_sc_de", recursive=TRUE)
 saveObject(matches, "r_sc_de")
+
+matches <- SingleR(
+    p_sce,
+    {
+        counts <- assay(m_sce)
+        scrapper::normalizeCounts(counts, size.factors=scrapper::centerSizeFactors(colSums(counts)))
+    },
+    labels=m_sce$label,
+    aggr.ref=TRUE,
+    de.method="t",
+    assay.type.test=1
+)
+unlink("r_sc_aggr", recursive=TRUE)
+saveObject(matches, "r_sc_aggr")

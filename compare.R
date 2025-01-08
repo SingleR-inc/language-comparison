@@ -43,4 +43,13 @@ expect_equal(r$delta.next, py$delta)
 expect_identical(sort(colnames(r$scores)), sort(colnames(py$scores)))
 cn <- colnames(r$scores)
 expect_equal(unname(as.matrix(r$scores)[,cn]), unname(as.matrix(py$scores)[,cn]))
+check_markers(metadata(r)$de.genes, metadata(py)$markers
+
+py <- readObject("py_sc_aggr")
+r <- readObject("r_sc_aggr")
+expect_identical(r$labels, py$best)
+expect_equal(r$delta.next, py$delta)
+expect_identical(sort(colnames(r$scores)), sort(colnames(py$scores)))
+cn <- colnames(r$scores)
+expect_equal(unname(as.matrix(r$scores)[,cn]), unname(as.matrix(py$scores)[,cn]))
 check_markers(metadata(r)$de.genes, metadata(py)$markers)
